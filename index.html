@@ -225,7 +225,7 @@ var st=document.createElement("style");st.textContent=css;document.head.appendCh
 var w=document.createElement("div");w.innerHTML='<button id="wxb" aria-label="Perguntar">✦</button><div id="wxp"><div id="wxh"><span>Assistente</span><span id="wxx">×</span></div><div id="wxm"></div><div id="wxf"><input id="wxi" placeholder="Pergunte..." autocomplete="off"><button id="wxs" aria-label="Enviar">→</button></div></div>';document.body.appendChild(w);
 var said=false;
 function say(t,who){var m=document.getElementById("wxm");var d=document.createElement("div");d.className=who;d.textContent=t;m.appendChild(d);m.scrollTop=m.scrollHeight}
-function answer(t){var l=t.toLowerCase(),best=null,bs=0;KB.forEach(function(e){var s=0;e.k.forEach(function(k){if(l.indexOf(k)>=0)s+=k.length});if(s>bs){bs=s;best=e}});say(best?best.a:FB,"b")}
+function answer(t){if(/^(agendar consulta|listar agenda|remarcar|confirmar retorno|ajuda)\b/i.test(t.trim())){hear(t);say($("#vout").textContent,"b");return}var l=t.toLowerCase(),best=null,bs=0;KB.forEach(function(e){var s=0;e.k.forEach(function(k){if(l.indexOf(k)>=0)s+=k.length});if(s>bs){bs=s;best=e}});say(best?best.a:FB,"b")}
 function send(){var i=document.getElementById("wxi");var t=i.value.trim();if(!t)return;say(t,"u");i.value="";setTimeout(function(){answer(t)},350)}
 document.getElementById("wxb").onclick=function(){var p=document.getElementById("wxp");p.classList.toggle("on");if(p.classList.contains("on")&&!said){said=true;say("Olá! Pergunte sobre consultas, foco ou comando de voz.","b")}};
 document.getElementById("wxx").onclick=function(){document.getElementById("wxp").classList.remove("on")};
@@ -239,10 +239,10 @@ function vout(t){$("#vout").textContent=t}
 function hear(t){
 var l=t.toLowerCase();
 var m=l.match(/agendar consulta ([a-zçãõáéíóú0-9 ]+)/);
-if(m){AG[(m[1]||"data a combinar").trim()]=["consulta"];saveAG();vout("Agendado: consulta "+m[1].trim()+".");return}
+if(m){AG[(m[1]||"data a combinar").trim()]=["consulta"];saveAG();vout("Anotado nesta demonstração: consulta "+m[1].trim()+". Isso não agenda uma consulta no consultório.");return}
 if(l.indexOf("listar agenda")>=0){var k=Object.keys(AG);vout(k.length?k.join(" | "):"Agenda vazia. Diga agendar consulta amanhã.");return}
-if(l.indexOf("remarcar")>=0){var ks=Object.keys(AG);if(!ks.length){vout("Nada para remarcar.");return}var v=AG[ks[0]];delete AG[ks[0]];AG[ks[0]+" (remarcada)"]=v;saveAG();vout("Remarcado: "+ks[0]+".");return}
-if(l.indexOf("confirmar retorno")>=0){vout("Retorno confirmado. Até lá.");return}
+if(l.indexOf("remarcar")>=0){vout("A remarcação depende do consultório. Nenhuma consulta real foi alterada nesta demonstração.");return}
+if(l.indexOf("confirmar retorno")>=0){vout("A confirmação depende do consultório. Nenhum retorno real foi confirmado nesta demonstração.");return}
 if(l.indexOf("ajuda")>=0){vout("Diga: agendar consulta amanhã, listar agenda, remarcar ou confirmar retorno.");return}
 vout("Não entendi. Diga ajuda para ver os comandos.");
 }
